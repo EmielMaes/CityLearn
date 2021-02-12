@@ -264,12 +264,13 @@ class CityLearn(gym.Env):
         self.simulation_period = simulation_period
         self.uid = None
         self.n_buildings = len([i for i in self.buildings])
-        self.reset()
+        self.reset() #this resets variables and makes that the variable self.hour is initialized
         
     def get_state_action_spaces(self):
         return self.observation_spaces, self.action_spaces
             
     def next_hour(self):
+        """Method which is used to advance an hour and set the time_steps in the building objects to this corresponding time"""
         self.time_step = next(self.hour)
         for building in self.buildings.values():
             building.time_step = self.time_step
@@ -316,7 +317,7 @@ class CityLearn(gym.Env):
             for uid, building in self.buildings.items():
             
                 if self.buildings_states_actions[uid]['actions']['cooling_storage']:
-                    # Cooling
+                    # Cooling (this is an error because actions[0] returns a list and it should be a single float 
                     _electric_demand_cooling = building.set_storage_cooling(actions[0])
                     actions = actions[1:]
                     elec_consumption_cooling_storage += building._electric_consumption_cooling_storage
@@ -324,7 +325,7 @@ class CityLearn(gym.Env):
                     _electric_demand_cooling = 0
 
                 if self.buildings_states_actions[uid]['actions']['dhw_storage']:
-                    # DHW
+                    # DHW (this is an error because actions[0] returns a list and it should be a single float
                     _electric_demand_dhw = building.set_storage_heating(actions[0])
                     actions = actions[1:]
                     elec_consumption_dhw_storage += building._electric_consumption_dhw_storage
@@ -503,7 +504,7 @@ class CityLearn(gym.Env):
                                 s.append(0.0)
                             elif state_name == 'dhw_storage_soc':
                                 s.append(0.0)
-            self.state = np.array(s)
+            self.state = np.array(s, dtype="object")
         else:
             self.reward_function = reward_function_ma(len(self.building_ids), self.get_building_information())
             
@@ -524,7 +525,7 @@ class CityLearn(gym.Env):
 
                 self.state.append(np.array(s, dtype=np.float32))
                 
-            self.state = np.array(self.state)
+            self.state = np.array(self.state, dtype="object")
             
         return self._get_ob()
     

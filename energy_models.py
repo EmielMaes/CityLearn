@@ -92,7 +92,7 @@ class Building:
         # Heating power that could be possible to supply to the storage device to increase its State of Charge once the heating demand of the building has been satisfied
         heat_power_avail = self.dhw_heating_device.get_max_heating_power() - self.sim_results['dhw_demand'][self.time_step]
         
-        # The storage device is charged (action > 0) or discharged (action < 0) taking into account the max power available and that the storage device cannot be discharged by an amount of energy greater than the energy demand of the building. 
+        # The storage device is charged (action > 0) or discharged (action < 0) taking into account the max power available and that the storage device cannot be discharged by an amount of energy greater than the energy demand of the building. The variable heating_energy_balance gives the amount of energy that is being supplied to (>0) or retrieved from (<0) the storage device.
         heating_energy_balance = self.dhw_storage.charge(max(-self.sim_results['dhw_demand'][self.time_step], min(heat_power_avail, action*self.dhw_storage.capacity)))
         
         if self.save_memory == False:
